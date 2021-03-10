@@ -4,7 +4,13 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mandelbrot</title>
+    <meta property="og:url" content="https://kamataryo.github.io/mandelbrot-tileserver/" />
+    <meta property="og:type" content="website" /> 
+    <meta property="og:title" content="Mandelbrot Map" /> 
+    <meta property="og:description" content="Exolore Mandelbrot set." /> 
+    <meta property="og:site_name" content="Mandelbrot Map" /> 
+    <meta property="og:image" content=" https://kamataryo.github.io/mandelbrot-tileserver/ogp.png" />
+    <title>Mandelbrot Map</title>
     <style>
         html, body, #map {
             padding: 0;
@@ -46,6 +52,12 @@
                             }
                         ],
                         "id": "tmp"
+                    }
+                })
+                map.on('error', (event) => {
+                    console.error(event.error)
+                    if(event.error.message === "Could not load image because of The source image could not be decoded.. Please make sure to use a supported image type such as PNG or JPEG. Note that SVGs are not supported.") {
+                        location.href = './'
                     }
                 })
             })
