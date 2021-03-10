@@ -6,7 +6,7 @@ const BASE_LENGTH = 4; // determin xy at zoom 0
 const canvas = new OffscreenCanvas(256 * RESOLUTION, 256 * RESOLUTION)
 const context = canvas.getContext("2d"); // TODO webgl を試す
 
-function renderMandelbrot(tile_x, tile_y, tile_z) {
+async function renderMandelbrot(tile_x, tile_y, tile_z) {
 
     function scale (input, index) {
         const length = BASE_LENGTH / 2 ** tile_z
@@ -41,21 +41,25 @@ function renderMandelbrot(tile_x, tile_y, tile_z) {
         
     }
 }
-return canvas.convertToBlob({ type: "image/png" })
-    .then(blob => blob.arrayBuffer())
-    .then(() => 'aaa') // NOTE firefox だとあかんかも. その場合はtoBlobを使う
+
+const blob = await canvas.convertToBlob({ type: "image/png" })
+.then(blob => blob.arrayBuffer())
+return blob
 }
 
-
+self.addEventListener('install', function(event) {
+    // console.log(event)
+})
 
 self.addEventListener('fetch', function (event) {
-    console.log('fetch')
     const match = event.request.url.match(/\#([0-9]+)\/([0-9]+)\/([0-9]+)\.png$/)
-    // if(match) {
-        const [,z,x,y] = match
-        // return event.respondWith(renderMandelbrot(x, y, z))
-        return event.respondWith('abc')
-    // } else {
-    //     return fetch(event.request)
-    // }
+    if(match) {
+    //     console.log({match})
+        const [,str_z,str_x,str_y] = match
+        const [x, y, z] = [str_x, str_y, str_z].map(value => parseInt(value, 10))
+        return event.respondWith(renderMandelbrot(x, y, z).then(blob => new Response(blob)))
+    } else {
+        return fetch(event.request)
+
+    }
 })
