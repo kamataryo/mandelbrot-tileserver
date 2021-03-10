@@ -1,4 +1,4 @@
-const MAX_TRIAL = 16;
+const MAX_TRIAL = 32;
 const OSCILATION_THREASHOLD = 2
 const RESOLUTION = 1
 const BASE_LENGTH = 4; // determin xy at zoom 0
