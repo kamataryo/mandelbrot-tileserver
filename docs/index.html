@@ -6,18 +6,50 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mandelbrot</title>
     <style>
-        html, body {
+        html, body, #map {
             padding: 0;
             margin: 0;
+            width: 100%;
+            height: 100%;
         }
     </style>
 </head>
 <body>
+    <div id="map" data-hash="on"></div>
+    <script src="https://cdn.geolonia.com/v1/embed?geolonia-api-key=YOUR-API-KEY"></script>
     <script>
         if('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('./sw.js', {scope: '/'})
+            navigator.serviceWorker.register('./sw.js').then((registration) => {
+                const map = new window.geolonia.Map({
+                    container: '#map',
+                    style: {
+                        "version": 8,
+                        "name": "Tmp",
+                        "metadata": {},
+                        "sources": {
+                            'mandelbrot': {
+                                'type': 'raster',
+                                'tiles': [
+                                    location.href + 'tiles/{z}/{x}/{y}.png'
+                                ],
+                                'tileSize': 256,
+                                'attribution':''
+                            }
+                        },
+                        "layers": [
+                            {
+                            'id': 'simple-tiles',
+                            'type': 'raster',
+                            'source': 'mandelbrot',
+                            'minzoom': 0,
+                            'maxzoom': 22
+                            }
+                        ],
+                        "id": "tmp"
+                    }
+                })
+            })
         }
     </script>
 </body>
-</script>
 </html>

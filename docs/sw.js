@@ -1,10 +1,10 @@
-const MAX_TRIAL = 32;
+const MAX_TRIAL = 16;
 const OSCILATION_THREASHOLD = 2
-const RESOLUTION = 2
+const RESOLUTION = 1
 const BASE_LENGTH = 4; // determin xy at zoom 0
 
 const canvas = new OffscreenCanvas(256 * RESOLUTION, 256 * RESOLUTION)
-const context = canvas.getContext("2d"); // TODO webgl を試す
+const context = canvas.getContext("2d");
 
 async function renderMandelbrot(tile_x, tile_y, tile_z) {
 
@@ -52,14 +52,14 @@ self.addEventListener('install', function(event) {
 })
 
 self.addEventListener('fetch', function (event) {
-    const match = event.request.url.match(/\#([0-9]+)\/([0-9]+)\/([0-9]+)\.png$/)
+    const match = event.request.url.match(/([0-9]+)\/([0-9]+)\/([0-9]+)\.png$/)
     if(match) {
-    //     console.log({match})
         const [,str_z,str_x,str_y] = match
         const [x, y, z] = [str_x, str_y, str_z].map(value => parseInt(value, 10))
-        return event.respondWith(renderMandelbrot(x, y, z).then(blob => new Response(blob)))
+        return event.respondWith(renderMandelbrot(x, y, z).then(blob => {
+            return new Response(blob)
+        }))
     } else {
         return fetch(event.request)
-
     }
 })
