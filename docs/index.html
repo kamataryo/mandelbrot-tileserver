@@ -24,44 +24,42 @@
     <div id="map"></div>
     <script src="https://cdn.geolonia.com/v1/embed?geolonia-api-key=YOUR-API-KEY"></script>
     <script>
-        if('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('./sw.js').then((registration) => {
-                const map = new window.geolonia.Map({
-                    container: '#map',
-                    style: {
-                        "version": 8,
-                        "name": "Tmp",
-                        "metadata": {},
-                        "sources": {
-                            'mandelbrot': {
-                                'type': 'raster',
-                                'tiles': [
-                                    location.href + 'tiles/{z}/{x}/{y}.png'
-                                ],
-                                'tileSize': 256,
-                                'attribution':''
-                            }
-                        },
-                        "layers": [
-                            {
-                            'id': 'simple-tiles',
-                            'type': 'raster',
-                            'source': 'mandelbrot',
-                            'minzoom': 0,
-                            'maxzoom': 22
-                            }
-                        ],
-                        "id": "tmp"
-                    }
-                })
-                map.on('error', (event) => {
-                    console.error(event.error)
-                    if(event.error.message === "Could not load image because of The source image could not be decoded.. Please make sure to use a supported image type such as PNG or JPEG. Note that SVGs are not supported.") {
-                        location.href = './'
-                    }
-                })
-            })
+        const style = {
+            "version": 8,
+            "name": "Tmp",
+            "metadata": {},
+            "sources": {
+                'mandelbrot': {
+                    'type': 'raster',
+                    'tiles': [
+                        location.href + 'tiles/{z}/{x}/{y}.png'
+                    ],
+                    'tileSize': 256,
+                    'attribution':''
+                }
+            },
+            "layers": [
+                {
+                'id': 'simple-tiles',
+                'type': 'raster',
+                'source': 'mandelbrot',
+                'minzoom': 0,
+                'maxzoom': 22
+                }
+            ],
+            "id": "tmp"
         }
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('./sw.js').then((registration) => {
+                if(!registration.active) {
+                    location.href = './'
+                } else {
+                    new window.geolonia.Map({ container: '#map', style })
+                }
+            })
+
+        })
+            
     </script>
 </body>
 </html>
